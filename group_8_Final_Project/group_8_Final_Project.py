@@ -1,77 +1,43 @@
-# Import Statements
 import tkinter as tk
+from PIL import ImageTk, Image
 from tkinter import messagebox
 
-# Input_Window Class
 class Input_Window(tk.Toplevel):
     def __init__(self, parent, saved_items_listbox):
         super().__init__(parent)
         self.title("Megaventory")
         self.saved_items_listbox = saved_items_listbox
-        self.text()
+        self.configure(bg="#CCE5FF")  # Set background color to very light blue
+        self.geometry("400x500")  # Set window size
+        self.title_label = tk.Label(self, text="Your Inventory", font=("Helvetica", 20), bg="#CCE5FF")
+        self.title_label.pack(pady=10)
+        # Uncomment and replace the following line with your actual image code when you have the image
+        # self.image_label = tk.Label(self, image=your_image, bg="#CCE5FF", borderwidth=2, relief="solid")
+        # self.image_label.pack(pady=10)
 
-    def text(self):
-        self.year_label = tk.Label(self, text="Enter the year:")
-        self.year_label.pack()
+        self.create_buttons()
 
-        self.year_entry = tk.Entry(self)
-        self.year_entry.pack()
+    def create_buttons(self):
+            button_frame = tk.Frame(self, bg="#CCE5FF")
+            button_frame.pack(pady=10)
 
-        self.name_label = tk.Label(self, text="Enter the name:")
-        self.name_label.pack()
+            buttons = [
+                ("Profit Calculator", self.open_profit_calculator),
+                ("View Inventory", self.view),
+                ("Pass Sold", self.pass_sold),
+                ("Need Something", self.need_something)
+            ]
 
-        self.name_entry = tk.Entry(self)
-        self.name_entry.pack()
+            for text, command in buttons:
+                btn = tk.Button(button_frame, text=text, command=command, bg="#4CAF50", fg="white", width=15, height=3)
+                btn.grid(row=len(button_frame.winfo_children()) // 2, column=len(button_frame.winfo_children()) % 2, padx=10, pady=5)
 
-        self.description_label = tk.Label(self, text="Enter the price:")
-        self.description_label.pack()
+            self.exit_button = tk.Button(self, text="Exit", command=self.master.quit, bg="red", fg="white")
+            self.exit_button.pack(side="right")
 
-        self.description_entry = tk.Entry(self)
-        self.description_entry.pack()
 
-        self.exit_button = tk.Button(self, text="Exit", command=self.master.quit)
-        self.exit_button.pack(side="right")
 
-        self.save_button = tk.Button(self, text="Save", command=self.save)
-        self.save_button.pack()
 
-        self.delete_button = tk.Button(self, text="Delete", command=self.delete)
-        self.delete_button.pack()
-
-        self.view_button = tk.Button(self, text="View", command=self.view)
-        self.view_button.pack()
-
-    def save(self):
-        year_input = self.year_entry.get()
-        name_input = self.name_entry.get()
-        description_input = self.description_entry.get()
-
-        if not all((year_input, name_input, description_input)):
-            messagebox.showwarning("Empty Input", "Please enter a year, name, and price")
-            return
-
-        try:
-            year = int(year_input)
-        except:
-            messagebox.showwarning("Input Error", "Please enter a valid year")
-            return
-
-        try:
-            price = float(description_input)
-        except:
-            messagebox.showwarning("Input Error", "Please enter a valid price")
-            return
-
-        item = f"{year} {name_input} ${price:.2f}"
-
-        with open("items.txt", "a") as f:
-            f.write(item + "\n")
-        self.saved_items_listbox.insert(tk.END, item)
-        self.year_entry.delete(0, tk.END)
-        self.name_entry.delete(0, tk.END)
-        self.description_entry.delete(0, tk.END)
-
-        self.destroy()
 
     def delete(self):
         selection = self.saved_items_listbox.curselection()
@@ -100,12 +66,91 @@ class Input_Window(tk.Toplevel):
         item = self.saved_items_listbox.get(index)
         messagebox.showinfo("View Item", item)
 
-# Main Application (root)
-root = tk.Tk()
-container = tk.Frame(root)
-container.pack(side="top", fill="both", expand=True)
 
-saved_items_listbox = tk.Listbox(container)
+    def open_profit_calculator(self):
+        profit_window = ProfitCalculator(self)
+        profit_window.grab_set()
+        profit_window.focus_set()
+        profit_window.wait_window()
+
+    def pass_sold(self):
+        # Add functionality for "Pass Sold" button
+        pass
+
+    def need_something(self):
+        # Add functionality for "Need Something" button
+        pass
+
+
+class ProfitCalculator(tk.Toplevel):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.title("Profit Calculator")
+        self.parent = parent
+        self.configure(bg="#CCE5FF")  # Set background color to very light blue
+        self.geometry("400x300")  # Set window size
+        self.create_widgets()
+
+    def create_widgets(self):
+        self.title_label = tk.Label(self, text="Comic Title:")
+        self.title_label.pack()
+
+        self.title_entry = tk.Entry(self)
+        self.title_entry.pack()
+
+        self.issue_label = tk.Label(self, text="Issue Number:")
+        self.issue_label.pack()
+
+        self.issue_entry = tk.Entry(self)
+        self.issue_entry.pack()
+
+        self.purchase_label = tk.Label(self, text="Purchase Price:")
+        self.purchase_label.pack()
+
+        self.purchase_entry = tk.Entry(self)
+        self.purchase_entry.pack()
+
+        self.sell_label = tk.Label(self, text="Selling Price:")
+        self.sell_label.pack()
+
+        self.sell_entry = tk.Entry(self)
+        self.sell_entry.pack()
+
+        self.calculate_button = tk.Button(self, text="Calculate Profit", command=self.calculate_profit_and_save)
+        self.calculate_button.pack()
+
+        self.result_label = tk.Label(self, text="")
+        self.result_label.pack()
+
+    def calculate_profit_and_save(self):
+        try:
+            title = self.title_entry.get()
+            issue_number = int(self.issue_entry.get())
+            purchase_price = float(self.purchase_entry.get())
+            selling_price = float(self.sell_entry.get())
+            profit = selling_price - purchase_price
+
+            # Save the information
+
+
+            item = f"Title: {title}, Issue: {issue_number}, Purchase Price: ${purchase_price:.2f}, Selling Price: ${selling_price:.2f}, Profit: ${profit:.2f}"
+
+            with open("items.txt", "a") as f:
+                f.write(item + "\n")
+
+            # Display the profit
+            self.result_label.config(text=f"Profit: ${profit:.2f}")
+        except ValueError:
+            messagebox.showwarning("Input Error", "Please enter valid numerical values for prices")
+
+
+
+root = tk.Tk()
+root.title("Your Inventory")
+root.configure(bg="green")  # Set background color to blue
+root.geometry("600x400")  # Set window size
+
+saved_items_listbox = tk.Listbox(root, bg="white", fg="black")
 saved_items_listbox.pack(side="bottom", fill="both", expand=True)
 
 with open("items.txt") as f:
@@ -113,5 +158,4 @@ with open("items.txt") as f:
         saved_items_listbox.insert(tk.END, item.strip())
 
 input_window = Input_Window(root, saved_items_listbox)
-
 root.mainloop()
