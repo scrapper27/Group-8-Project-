@@ -1,2 +1,0 @@
-Title: hay, Issue: 122, Purchase Price: $1234, Selling Price: $2345
-Title: iron man, Issue: 12, Purchase Price: $120, Selling Price: $200
