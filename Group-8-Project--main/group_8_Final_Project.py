@@ -193,6 +193,7 @@ class ProfitCalculator(tk.Toplevel):
         self.result_label.config(text="Item saved to inventory")
 
 
+
 class Sold(tk.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
@@ -200,7 +201,20 @@ class Sold(tk.Toplevel):
         self.parent = parent
 
         self.geometry("400x400")
+        self.create_widgets()
+
+    def create_widgets(self):
+        self.search_label = tk.Label(self, text="Search:")
+        self.search_label.pack()
+
+        self.search_entry = tk.Entry(self)
+        self.search_entry.pack()
+
+        self.search_button = tk.Button(self, text="Search", command=self.search_sold_inventory)
+        self.search_button.pack()
+
         self.display_sold()
+
         self.create_delete_button()
         self.back()
 
@@ -243,6 +257,15 @@ class Sold(tk.Toplevel):
                 self.sold_listbox.insert(tk.END, item.strip())
 
         messagebox.showinfo("Delete Success", "Selected item(s) deleted.")
+
+    def search_sold_inventory(self):
+        search_term = self.search_entry.get().lower()
+        self.sold_listbox.delete(0, tk.END)
+        with open("sold.txt", "r") as f:
+            sold_inventory = f.readlines()
+        for item in sold_inventory:
+            if search_term in item.lower():
+                self.sold_listbox.insert(tk.END, item.strip())
 
     def back(self):
         self.back_button = tk.Button(self, text="Back", command=self.destroy)
