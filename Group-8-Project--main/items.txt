@@ -1,0 +1,2 @@
+Title: iron man, Issue: 12, Purchase Price: $120, Selling Price: $200
+Title: spider man , Issue: 12, Purchase Price: $50, Selling Price: $120
