@@ -1,7 +1,23 @@
+#Owen Stackhouse
+#Caleb Roberts
+#Isaac Williams
+
+#This code is built to help comic book stores or individuals with personal collections. It assists comic 
+#book owners in digitally organizing their comics. The program allows you to input your comic book, save it,
+#and calculate the profit based on the purchase and sale prices. The information is then saved in your 
+#inventory. You can search for items, select those to be sold, and move them to the sold items category, 
+#where they are saved until you choose to delete them permanently. This feature enables customers to view 
+#their comics digitally, eliminating the need to sort through physical copies.
+
+
+
 import tkinter as tk
 from tkinter import simpledialog, messagebox
 
 
+#This class manages your inventory. The code activates when you press the inventory button on the main menu. 
+#It pops up, allowing you to view your inventory, which is stored in the file called "items.txt." Hovering over 
+#items with the mouse and clicking highlights them in gray. You can mark items as sold, and they will be moved to the "sold.txt" file.
 class ViewInventory(tk.Toplevel):
     def __init__(self, parent, saved_items_listbox):
         super().__init__(parent)
@@ -76,6 +92,10 @@ class ViewInventory(tk.Toplevel):
         messagebox.showinfo("Success", "Item marked as sold.")
 
 
+
+#The main menu provides access to various features. Pressing "Your Inventory" lets you view your inventory,
+#"Add a New Comic" allows you to add a new comic, and "Past Sold" shows previously sold items.
+
 class Input_Window(tk.Toplevel):
     def __init__(self, parent, saved_items_listbox):
         super().__init__(parent)
@@ -122,8 +142,10 @@ class Input_Window(tk.Toplevel):
         sold_window.focus_set()
         sold_window.wait_window()
 
-
-
+#The "Profit Calculator" combines the functionalities of saving your comic and profit calculations 
+#into a single button. Originally considered as separate buttons, we realized during development 
+#that merging them made more sense. You input the name, issue, purchase price, and sale price of 
+#the comic, and it saves the information in "items.txt" for viewing in your inventory.
 class ProfitCalculator(tk.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
@@ -193,7 +215,8 @@ class ProfitCalculator(tk.Toplevel):
         self.result_label.config(text="Item saved to inventory")
 
 
-
+#This class shows previously sold items. It accesses "sold.txt," which contains items sold using the "Your Inventory" class. 
+#It diverts the sold item from "items.txt" to "sold.txt."
 class Sold(tk.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
